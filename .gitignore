@@ -1,0 +1,8 @@
+# no binaries
+**/*
+!**/*.go
+!**/
+!.gitignore
+!README.md
+!**/out_json/*
+
