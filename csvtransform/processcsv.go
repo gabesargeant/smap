@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"smap/csvtransform/record"
+	"smap/record"
 	"strconv"
 	"strings"
 )

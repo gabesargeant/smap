@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"smap/csvtransform/record"
+	"smap/record"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
