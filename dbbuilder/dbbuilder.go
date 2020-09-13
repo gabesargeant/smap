@@ -60,14 +60,14 @@ func main() {
 
 	if *args.LoadData {
 
-		loadDataToDynamboDB(sess, *args.DynamoDBTableName, &recs)
+		loadDataToDynamoDB(sess, *args.DynamoDBTableName, &recs)
 	}
 	//listDynamoTables(sess, args.DynamoDBTableName)
 	//listS3States(sess)
 
 }
 
-func loadDataToDynamboDB(sess *session.Session, name string, recs *[]record.Record) {
+func loadDataToDynamoDB(sess *session.Session, name string, recs *[]record.Record) {
 
 	svc := dynamodb.New(sess)
 
