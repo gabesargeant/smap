@@ -129,9 +129,9 @@ func composeBatchInputs(recs *[]record.Record, name string) *[]dynamodb.BatchWri
 	for i := 0; i < buckets; i++ {
 
 		//putreqarr := make([]dynamodb.PutRequest, 25)
-		// wrArr := make([]*dynamodb.WriteRequest, 25)
+		//wrArr := make([]*dynamodb.WriteRequest, 25)
 		wrArr := []*dynamodb.WriteRequest{}
-		// tmp := []*dynamodb.WriteRequest{}
+		//tmp := []*dynamodb.WriteRequest{}
 
 		stepValue := i * 25
 
@@ -142,7 +142,6 @@ func composeBatchInputs(recs *[]record.Record, name string) *[]dynamodb.BatchWri
 			if j+stepValue == len(*recs) {
 				fmt.Println("Length of recs")
 				fmt.Println(len(*recs))
-				// tmp = wrArr[:j]
 
 				break
 			}
@@ -163,24 +162,16 @@ func composeBatchInputs(recs *[]record.Record, name string) *[]dynamodb.BatchWri
 			wr.SetPutRequest(&pr)
 
 			wrArr = append(wrArr, &wr)
-			//wrArr[j] = &wr
 
 		}
 		wrMap := make(map[string][]*dynamodb.WriteRequest, 1)
 
 		wrMap[name] = wrArr
-		// if tmp != nil {
-		// 	wrMap[name] = tmp
-		// }
 
 		arrayBatchRequest[i].SetRequestItems(wrMap)
 
-		//fmt.Println(arrayBatchRequest)
-
 	}
-	//fmt.Println(arrayBatchRequest)
 	return &arrayBatchRequest
-
 }
 
 // purgeTable calls delete on table entered.
