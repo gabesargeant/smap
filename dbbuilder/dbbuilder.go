@@ -8,12 +8,12 @@ import (
 	"os"
 	"smap/record"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 // Args CMD Line ARgs
@@ -62,8 +62,6 @@ func main() {
 
 		loadDataToDynamoDB(sess, *args.DynamoDBTableName, &recs)
 	}
-	//listDynamoTables(sess, args.DynamoDBTableName)
-	//listS3States(sess)
 
 }
 
@@ -191,37 +189,6 @@ func purgeTable(sess *session.Session, tableToRemove string) {
 	fmt.Println(result)
 }
 
-func listDynamoTables(sess *session.Session, tableName string) {
-
-	svc := dynamodb.New(sess)
-	input := dynamodb.ListTablesInput{}
-
-	list, err := svc.ListTables(&input)
-	if err != nil {
-
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case dynamodb.ErrCodeInternalServerError:
-				fmt.Println(dynamodb.ErrCodeInternalServerError, aerr.Error())
-			default:
-				fmt.Println(aerr.Error())
-
-			}
-		}
-
-	}
-
-	for i, table := range list.TableNames {
-		fmt.Println(i)
-		fmt.Println(*table)
-		if *table == tableName {
-			fmt.Println("Table already exists")
-			os.Exit(2)
-		}
-	}
-
-}
-
 func buildCreateTableInput(tableName string, tableAtts []*dynamodb.AttributeDefinition, keySchema []*dynamodb.KeySchemaElement) dynamodb.CreateTableInput {
 
 	ppr := "PAY_PER_REQUEST"
@@ -253,34 +220,11 @@ func createDynamoDBTable(sess *session.Session, cti dynamodb.CreateTableInput) {
 
 }
 
-func listS3States(sess *session.Session) {
-
-	svc := s3.New(sess)
-
-	listBucketsInput := s3.ListBucketsInput{}
-	output, err := svc.ListBuckets(&listBucketsInput)
-
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			default:
-				fmt.Println(aerr.Error())
-			}
-		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			fmt.Println(err.Error())
-		}
-		return
-	}
-	fmt.Println(output)
-
-}
-
 func establishAWSSession() *session.Session {
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
+		//SharedConfigState: session.SharedConfigEnable,
+		Config: aws.Config{Region: aws.String("ap-southeast-2")},
 	}))
 
 	return sess
@@ -341,13 +285,6 @@ func getReader(inputFile string) io.Reader {
 	reader := bufio.NewReader(file)
 
 	return reader
-
-}
-
-func putRecord(record record.Record) {
-
-	//
-	//check(err)
 
 }
 
