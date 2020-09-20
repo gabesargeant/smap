@@ -235,12 +235,12 @@ func buildTableAttributes(rec record.Record) []*dynamodb.AttributeDefinition {
 
 	//var n string = "N"
 	var s string = "S"
-	tid := "TableID"
+	pid := "PartitionID"
 	rid := "RegionID"
 
 	ad1 := dynamodb.AttributeDefinition{}
 
-	ad1.AttributeName = &tid
+	ad1.AttributeName = &pid
 	ad1.AttributeType = &s
 
 	ad2 := dynamodb.AttributeDefinition{}
@@ -259,7 +259,7 @@ func buildKeySchema() []*dynamodb.KeySchemaElement {
 	arr := make([]*dynamodb.KeySchemaElement, 2)
 	hash := "HASH"
 	rng := "RANGE"
-	tid := "TableID"
+	pid := "PartitionID"
 	rid := "RegionID"
 
 	kse1 := dynamodb.KeySchemaElement{}
@@ -267,7 +267,7 @@ func buildKeySchema() []*dynamodb.KeySchemaElement {
 	kse1.KeyType = &hash
 
 	kse2 := dynamodb.KeySchemaElement{}
-	kse2.AttributeName = &tid
+	kse2.AttributeName = &pid
 	kse2.KeyType = &rng
 
 	arr[0] = &kse1
@@ -299,7 +299,7 @@ func defineFlags() Args {
 	args.DynamoDBTableName = flag.String("n", "test", "Name of the DynamoDB Table")
 	///home/gabe/go/src/csv_etl/out/2016Census_G02_AUS_SA4.csv.json
 	args.InputFile = flag.String("f", "", "File to read, expected json format")
-	args.Purge = flag.Bool("p", false, "Purge the DynamoDB Table")
+	args.Purge = flag.Bool("p", false, "Purge the DynamoDB Table, you need to specify the table name and a -f named x")
 	args.ConfirmPurge = flag.Bool("cp", false, "Second Required Flag to Confirm Purge of the DynamoDB Table")
 	args.BuildTable = flag.Bool("b", false, "Build the table named by -n ")
 	args.LoadData = flag.Bool("l", false, "load data specified in json file at location -f .")

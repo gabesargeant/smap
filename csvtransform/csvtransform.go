@@ -99,7 +99,7 @@ func readCSV(file *os.File, outFile *os.File) {
 	var buff []byte             //the json object
 	var buffCommaNewLine []byte //the json object with a ,\n on it
 
-	tableID := extractTableName(file)
+	partitionID := extractTableName(file)
 
 	for {
 
@@ -117,7 +117,7 @@ func readCSV(file *os.File, outFile *os.File) {
 			log.Fatal(err)
 		}
 
-		buff = record.BuildRecord(row[0], tableID, buildJSONMaps(firstLine, row))
+		buff = record.BuildRecord(row[0], partitionID, buildJSONMaps(firstLine, row))
 		buffCommaNewLine = append(buff, ","...)
 
 	}

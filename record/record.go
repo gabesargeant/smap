@@ -7,9 +7,9 @@ import (
 
 // Record a struct used to create a json object representing a region ID and then a set of key value pairs of data.
 type Record struct {
-	RegionID string             `json:"RegionID"`
-	TableID  string             `json:"TableID"` //TODO change this to partionID
-	KVPairs  map[string]float64 `json:"KVPairs"`
+	RegionID    string             `json:"RegionID"`
+	PartitionID string             `json:"PartitionID"` //TODO change this to partionID
+	KVPairs     map[string]float64 `json:"KVPairs"`
 }
 
 //Collection Array of Records
@@ -17,7 +17,7 @@ type Collection struct {
 	ArrRecord []Record
 }
 
-//NewRecordArray returns a struct ofthat holds an array of records
+//NewRecordArray returns a struct that holds an array of records
 func NewRecordArray() Collection {
 
 	ar := Collection{}
@@ -27,13 +27,13 @@ func NewRecordArray() Collection {
 }
 
 //BuildRecord .. of Map into Json object.
-func BuildRecord(rec string, tableID string, jmap map[string]float64) []byte {
+func BuildRecord(rec string, partitionID string, jmap map[string]float64) []byte {
 
 	r := Record{}
 
 	r.RegionID = rec
 	r.KVPairs = jmap
-	r.TableID = tableID
+	r.PartitionID = partitionID
 
 	b, err := json.Marshal(r)
 
