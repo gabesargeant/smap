@@ -8,7 +8,7 @@ import (
 // Record a struct used to create a json object representing a region ID and then a set of key value pairs of data.
 type Record struct {
 	RegionID string             `json:"RegionID"`
-	TableID  string             `json:"TableID"`
+	TableID  string             `json:"TableID"` //TODO change this to partionID
 	KVPairs  map[string]float64 `json:"KVPairs"`
 }
 
