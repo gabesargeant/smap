@@ -110,7 +110,7 @@ func readCSV(file *os.File, outFile *os.File) {
 			break
 		}
 
-		//write output from the previous itteration, first write is empty
+		//write output from the previous iteration, first write is empty
 		writeOutFile(buffCommaNewLine, bw)
 
 		if err != nil {
