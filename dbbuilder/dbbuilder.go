@@ -257,17 +257,21 @@ func buildTableAttributes(rec record.Record) []*dynamodb.AttributeDefinition {
 func buildKeySchema() []*dynamodb.KeySchemaElement {
 
 	arr := make([]*dynamodb.KeySchemaElement, 2)
-	hash := "HASH"
-	rng := "RANGE"
+
+	//partition key
 	pid := "PartitionID"
+	hash := "HASH"
+
+	//sort key
 	rid := "RegionID"
+	rng := "RANGE"
 
 	kse1 := dynamodb.KeySchemaElement{}
-	kse1.AttributeName = &rid
+	kse1.AttributeName = &pid
 	kse1.KeyType = &hash
 
 	kse2 := dynamodb.KeySchemaElement{}
-	kse2.AttributeName = &pid
+	kse2.AttributeName = &rid
 	kse2.KeyType = &rng
 
 	arr[0] = &kse1
