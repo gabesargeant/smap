@@ -151,9 +151,9 @@ func extractTableName(file *os.File) string {
 func extractGeoLevel(file *os.File) string {
 
 	name := filepath.Base(file.Name())
-
+	fmt.Println(name)
 	s := strings.Split(name, "_")
-	t := strings.Split(s[3], ".")
+	t := strings.Split(s[len(s)-1], ".")
 	return t[0]
 
 }
@@ -171,6 +171,9 @@ func buildJSONMaps(keys []string, values []string) map[string]float64 {
 	data := make(map[string]float64)
 
 	for i := 0; i < len(keys); i++ {
+		if values[i] == ".." {
+			values[i] = "-1"
+		}
 		j, err := strconv.ParseFloat(values[i], 64)
 		check(err)
 		data[keys[i]] = j

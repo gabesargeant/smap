@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"smap/record"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -27,7 +28,7 @@ type Args struct {
 
 // Main - Entry point for writing files into a DynamoDB
 func main() {
-	fmt.Println("Starting DB Writer app to pump record into a Dynamo DB Table")
+	fmt.Println("Starting DB Writer")
 
 	args := defineFlags()
 	flag.Parse()
@@ -45,6 +46,8 @@ func main() {
 		os.Exit(2)
 	}
 
+	fmt.Print("Opening Record: ")
+	fmt.Println(filepath.Base(*args.InputFile))
 	recs := record.OpenRecordsAtPath(*args.InputFile)
 
 	if *args.BuildTable {
@@ -108,7 +111,7 @@ func loadDataToDynamoDB(sess *session.Session, name string, recs *[]record.Recor
 func printAllResults(outArr []*dynamodb.BatchWriteItemOutput) {
 
 	for _, result := range outArr {
-		if result != nil {
+		if len(result.UnprocessedItems) != 0 {
 			fmt.Println(*result)
 		}
 
@@ -118,8 +121,9 @@ func printAllResults(outArr []*dynamodb.BatchWriteItemOutput) {
 func composeBatchInputs(recs *[]record.Record, name string) *[]dynamodb.BatchWriteItemInput {
 
 	buckets := (len(*recs) / 25) + 1
-	fmt.Println("Number of Records " + string(buckets))
+	fmt.Print("Number of Buckets: ")
 	fmt.Println(buckets)
+	fmt.Print("Number of Records: ")
 	fmt.Println(len(*recs))
 	arrayBatchRequest := make([]dynamodb.BatchWriteItemInput, buckets)
 
@@ -137,8 +141,6 @@ func composeBatchInputs(recs *[]record.Record, name string) *[]dynamodb.BatchWri
 			//fmt.Println(stepValue + j)
 
 			if j+stepValue == len(*recs) {
-				fmt.Println("Length of recs")
-				fmt.Println(len(*recs))
 
 				break
 			}
