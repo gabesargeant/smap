@@ -8,6 +8,7 @@ import (
 // Record a struct used to create a json object representing a region ID and then a set of key value pairs of data.
 type Record struct {
 	RegionID    string             `json:"RegionID"`
+	GeoLevel    string             `json:"GeoLevel"`
 	PartitionID string             `json:"PartitionID"` //TODO change this to partionID
 	KVPairs     map[string]float64 `json:"KVPairs"`
 }
@@ -27,13 +28,14 @@ func NewRecordArray() Collection {
 }
 
 //BuildRecord .. of Map into Json object.
-func BuildRecord(rec string, partitionID string, jmap map[string]float64) []byte {
+func BuildRecord(rec string, partitionID string, geoLevel string, jmap map[string]float64) []byte {
 
 	r := Record{}
 
 	r.RegionID = rec
 	r.KVPairs = jmap
 	r.PartitionID = partitionID
+	r.GeoLevel = geoLevel
 
 	b, err := json.Marshal(r)
 

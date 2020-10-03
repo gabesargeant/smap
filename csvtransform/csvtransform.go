@@ -16,19 +16,26 @@ import (
 
 // Args  about
 type Args struct {
-	CSV    *string
-	OutDir *string
+	CSV     *string
+	OutDir  *string
+	Verbose *bool
 }
+
+// Verbose printing of comments.
+var Verbose bool
 
 //
 func main() {
 
 	args := defineFlags()
-	fmt.Println("Flags set")
+
 	flag.Parse()
+	Verbose = *args.Verbose
 
 	if args.CSV != nil && *args.CSV != "" {
-		fmt.Println("Path Supplied for location of one CSV")
+		if Verbose == true {
+			fmt.Println("Path Supplied for location of one CSV")
+		}
 
 		f := findFiles(*args.CSV)
 		createOutDir(*args.OutDir)
@@ -36,6 +43,7 @@ func main() {
 		readCSV(f, outfile)
 
 	} else {
+
 		fmt.Println("no path supplied for CSV option")
 		flag.PrintDefaults()
 		os.Exit(99)
@@ -44,9 +52,9 @@ func main() {
 }
 
 func findFiles(filepath string) *os.File {
-
-	fmt.Printf("attempting to get %s \n", filepath)
-
+	if Verbose == true {
+		fmt.Printf("attempting to get %s \n", filepath)
+	}
 	f, err := os.Open(filepath)
 
 	check(err)
@@ -84,14 +92,17 @@ func check(e error) {
 }
 
 func readCSV(file *os.File, outFile *os.File) {
-	fmt.Println("reading CSV")
+	if Verbose == true {
+		fmt.Println("reading CSV")
+	}
 
 	br := bufio.NewReader(file)
 	r := csv.NewReader(br)
 
 	firstLine, _ := r.Read()
-	fmt.Println(firstLine)
-
+	if Verbose == true {
+		fmt.Println(firstLine[1:])
+	}
 	bw := bufio.NewWriter(outFile)
 	//Write Start Array
 	writeOutFile([]byte("["), bw)
@@ -100,6 +111,7 @@ func readCSV(file *os.File, outFile *os.File) {
 	var buffCommaNewLine []byte //the json object with a ,\n on it
 
 	partitionID := extractTableName(file)
+	geoLevel := extractGeoLevel(file)
 
 	for {
 
@@ -117,7 +129,7 @@ func readCSV(file *os.File, outFile *os.File) {
 			log.Fatal(err)
 		}
 
-		buff = record.BuildRecord(row[0], partitionID, buildJSONMaps(firstLine, row))
+		buff = record.BuildRecord(row[0], partitionID, geoLevel, buildJSONMaps(firstLine[1:], row[1:]))
 		buffCommaNewLine = append(buff, ","...)
 
 	}
@@ -133,6 +145,16 @@ func extractTableName(file *os.File) string {
 	s := strings.Split(name, "_")
 
 	return s[1]
+
+}
+
+func extractGeoLevel(file *os.File) string {
+
+	name := filepath.Base(file.Name())
+
+	s := strings.Split(name, "_")
+	t := strings.Split(s[3], ".")
+	return t[0]
 
 }
 
@@ -163,8 +185,9 @@ func buildJSONMaps(keys []string, values []string) map[string]float64 {
 func defineFlags() Args {
 	var a = Args{}
 	///home/gabe/Documents/census/2016_GCP_ALL_for_AUS_short-header/2016 Census GCP All Geographies for AUST/STE/AUST/2016Census_G02_AUS_STE.csv
-	a.CSV = flag.String("c", "/home/gabe/Documents/census/2016_GCP_ALL_for_AUS_short-header/2016 Census GCP All Geographies for AUST/STE/AUST/2016Census_G02_AUS_STE.csv", "CSV Location: a path to a single file")
+	a.CSV = flag.String("c", "/home/gabe/Documents/census/2016_GCP_ALL_for_AUS_short-header/2016-Census-GCP-All-Geography-for-AUST/STE/AUST/2016Census_G02_AUS_STE.csv", "CSV Location: a path to a single file")
 	a.OutDir = flag.String("o", "./out_json", "Output Directory, if not specified all outputs will be written to ./out")
+	a.Verbose = flag.Bool("v", false, "Run loudly, default false")
 
 	return a
 }
