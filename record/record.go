@@ -13,6 +13,12 @@ type Record struct {
 	KVPairs     map[string]float64 `json:"KVPairs"`
 }
 
+// Record a struct used to create a json object representing a region ID and then a set of key value pairs of data.
+type DeleteRecord struct {
+	RegionID    string `json:"RegionID"`
+	PartitionID string `json:"PartitionID"`
+}
+
 //Collection Array of Records
 type Collection struct {
 	ArrRecord []Record
@@ -63,4 +69,22 @@ func OpenRecordsAtPath(path string) []Record {
 
 	return col
 
+}
+
+// CreateDeleteRecord Returns a range of DeleteRecords that
+// are records featuring primary keys for the delete opperation.
+func CreateDeleteRecord(record []Record) []DeleteRecord {
+
+	var rtnRecs = []DeleteRecord{}
+
+	for _, r := range record {
+
+		dr := DeleteRecord{}
+		dr.RegionID = r.RegionID
+		dr.PartitionID = r.PartitionID
+
+		rtnRecs = append(rtnRecs, dr)
+	}
+
+	return rtnRecs
 }
